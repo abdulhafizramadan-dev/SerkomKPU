@@ -34,17 +34,26 @@ import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.ui.theme.poppinsFontFamily
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
+@Destination
 @ExperimentalMaterial3Api
 @Composable
 fun DetailElectorate(
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator,
     electorate: Electorate
 ) {
     val scrollState = rememberScrollState()
+
+    val navigateUp: () -> Unit = { navigator.navigateUp() }
+
     Scaffold(
         topBar = {
             KpuTopAppBar(
-                title = "Daftar Data Pemilih",
+                title = "Detail Data Pemilih",
+                onNavIconClicked = navigateUp,
                 type = KpuTopAppBarType.Detail
             )
         }

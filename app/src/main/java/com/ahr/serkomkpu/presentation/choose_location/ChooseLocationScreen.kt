@@ -23,17 +23,26 @@ import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.ui.theme.poppinsFontFamily
 import com.ahr.serkomkpu.ui.theme.redKpu
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
+@Destination
 @ExperimentalMaterial3Api
 @Composable
 fun ChooseLocationScreen(
     modifier: Modifier = Modifier,
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator
 ) {
+
+    val navigateUp: () -> Unit = { navigator.navigateUp() }
+
     Scaffold(
         topBar = {
             KpuTopAppBar(
                 title = "Pilih Lokasi",
-                type = KpuTopAppBarType.Detail,
+                onNavIconClicked = navigateUp,
+                type = KpuTopAppBarType.Detail
             )
         },
         modifier = modifier,

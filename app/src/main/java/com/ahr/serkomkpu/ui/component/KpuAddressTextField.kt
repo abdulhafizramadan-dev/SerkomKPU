@@ -42,8 +42,9 @@ fun KpuAddressTextField(
     modifier: Modifier = Modifier,
     label: String,
     text: String,
-    onTextChanged: (String) -> Unit,
     placeholder: String,
+    onTextChanged: (String) -> Unit,
+    onChooseLocationClicked: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -54,7 +55,7 @@ fun KpuAddressTextField(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = label, style = MaterialTheme.typography.labelInputTextStyle)
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(onClick = onChooseLocationClicked) {
                 Text(text = "Cari di maps")
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(

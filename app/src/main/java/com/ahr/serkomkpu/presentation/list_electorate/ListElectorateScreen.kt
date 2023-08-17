@@ -23,19 +23,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahr.serkomkpu.domain.model.Electorate
+import com.ahr.serkomkpu.presentation.destinations.DetailElectorateDestination
 import com.ahr.serkomkpu.ui.component.KpuOutlinedTextField
 import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.ui.theme.greyTextFill
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
+@Destination
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
 fun ListElectorateScreen(
-    list: List<Electorate> = emptyList()
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator
 ) {
 
     var text by remember { mutableStateOf("") }
+
+    val navigateToDetailElectorate: (Electorate) -> Unit = { electorate ->
+        navigator.navigate(DetailElectorateDestination(electorate))
+    }
+
+    val electorates = (1..10).map {
+        Electorate(
+            nik = "201004000242002",
+            name = "Ki Hadjar Dewantara",
+            gender = "Pria",
+            address = "Purwokerto Selatan",
+            dateCollectionDate = "13-12-2023",
+            phone = "08123456789",
+            id = it
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -63,12 +84,13 @@ fun ListElectorateScreen(
                         .padding(top = 26.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
                 )
             }
-            items(items = list, key = { it.id }) { electorate ->
+            items(items = electorates, key = { it.id }) { electorate ->
                 KpuElectorateItem(
                     electorate = electorate,
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 16.dp),
+                    onCardClicked = navigateToDetailElectorate
                 )
             }
         }
@@ -84,19 +106,7 @@ fun PreviewListElectorateScreen() {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            val electorates = (1..10).map {
-                Electorate(
-                    nik = "201004000242002",
-                    name = "Ki Hadjar Dewantara",
-                    gender = "Pria",
-                    address = "Purwokerto Selatan",
-                    dateCollectionDate = "13-12-2023",
-                    id = it
-                )
-            }
-            ListElectorateScreen(
-                list = electorates
-            )
+            ListElectorateScreen()
         }
     }
 }

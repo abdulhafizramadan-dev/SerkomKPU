@@ -1,6 +1,7 @@
 package com.ahr.serkomkpu.presentation.entry_electorate
 
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ahr.serkomkpu.presentation.destinations.ChooseLocationScreenDestination
+import com.ahr.serkomkpu.presentation.destinations.HomeScreenDestination
 import com.ahr.serkomkpu.ui.component.KpuAddressTextField
 import com.ahr.serkomkpu.ui.component.KpuButton
 import com.ahr.serkomkpu.ui.component.KpuDatePicker
@@ -38,13 +41,32 @@ import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.ui.theme.poppinsFontFamily
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
+@ExperimentalFoundationApi
+@Destination
 @ExperimentalMaterial3Api
 @Composable
-fun EntryElectorateScreen() {
+fun EntryElectorateScreen(
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator
+) {
 
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+
+    val navigateUp: () -> Unit = { navigator.navigateUp() }
+    val navigateToChooseLocationScreen: () -> Unit = {
+        navigator.navigate(ChooseLocationScreenDestination())
+    }
+    val navigateToHomeScreen: () -> Unit = {
+        navigator.navigate(HomeScreenDestination()) {
+            popUpTo(HomeScreenDestination.route) {
+                inclusive = true
+            }
+        }
+    }
 
     val options = remember { listOf("Laki-Laki", "Perempuan") }
     var selectedOption by remember { mutableStateOf(options[0]) }
@@ -53,7 +75,8 @@ fun EntryElectorateScreen() {
         topBar = {
             KpuTopAppBar(
                 title = "Entry Data Pemilih",
-                type = KpuTopAppBarType.Detail,
+                onNavIconClicked = navigateUp,
+                type = KpuTopAppBarType.Detail
             )
         }
     ) { paddingValues ->
@@ -104,8 +127,9 @@ fun EntryElectorateScreen() {
             KpuAddressTextField(
                 label = "Alamat Rumah",
                 text = "",
-                onTextChanged = {},
                 placeholder = "Masukan alamat rumah",
+                onTextChanged = {},
+                onChooseLocationClicked = navigateToChooseLocationScreen
             )
             Spacer(modifier = Modifier.height(20.dp))
             Row(
@@ -119,7 +143,8 @@ fun EntryElectorateScreen() {
                         contentColor = Color(0xFFFFFFFF)
                     )
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(4
+                    .dp))
                 Text(
                     text = "image.jpg",
                     style = TextStyle(
@@ -132,13 +157,14 @@ fun EntryElectorateScreen() {
             Spacer(modifier = Modifier.height(34.dp))
             KpuButton(
                 text = "Submit",
-                onButtonClicked = { /*TODO*/ },
+                onButtonClicked = navigateToHomeScreen,
                 modifier = Modifier.fillMaxWidth()
             )
         }
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Preview
 @Composable

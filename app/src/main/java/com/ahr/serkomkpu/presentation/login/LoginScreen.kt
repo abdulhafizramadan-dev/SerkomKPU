@@ -1,5 +1,6 @@
 package com.ahr.serkomkpu.presentation.login
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ahr.serkomkpu.presentation.destinations.HomeScreenDestination
+import com.ahr.serkomkpu.presentation.destinations.LoginScreenDestination
 import com.ahr.serkomkpu.ui.component.KpuButton
 import com.ahr.serkomkpu.ui.component.KpuTextField
 import com.ahr.serkomkpu.ui.component.KpuTextFieldType
@@ -29,14 +32,28 @@ import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.ui.theme.poppinsFontFamily
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
+@ExperimentalFoundationApi
+@Destination
 @ExperimentalMaterial3Api
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator
 ) {
 
     val scrollState = rememberScrollState()
+
+    val navigateToMainScreen: () -> Unit = {
+        navigator.navigate(HomeScreenDestination()) {
+            popUpTo(LoginScreenDestination.route) {
+                inclusive = true
+            }
+        }
+    }
 
     Scaffold(
         topBar = { KpuTopAppBar(title = "Masuk", type = KpuTopAppBarType.Auth) },
@@ -79,7 +96,7 @@ fun LoginScreen(
             }
             KpuButton(
                 text = "Masuk",
-                onButtonClicked = { /*TODO*/ },
+                onButtonClicked = navigateToMainScreen,
                 modifier = Modifier.offset(y = (-8).dp)
                     .fillMaxWidth()
             )
@@ -87,6 +104,7 @@ fun LoginScreen(
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Preview
 @Composable
