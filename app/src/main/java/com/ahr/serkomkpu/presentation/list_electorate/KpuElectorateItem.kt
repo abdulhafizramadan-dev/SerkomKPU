@@ -22,27 +22,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ahr.serkomkpu.R
 import com.ahr.serkomkpu.domain.model.Electorate
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.ui.theme.poppinsFontFamily
+import com.ahr.serkomkpu.util.decodeStringBase64ToBitMap
 
 @ExperimentalMaterial3Api
 @Composable
 fun KpuElectorateItem(
     modifier: Modifier = Modifier,
     electorate: Electorate,
-    onCardClicked: (Electorate) -> Unit = {}
+    onCardClicked: (Int) -> Unit = {}
 ) {
     Box(modifier = modifier) {
         ElevatedCard(
-            onClick = { onCardClicked(electorate) },
+            onClick = { onCardClicked(electorate.id) },
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.elevatedCardElevation(
                 defaultElevation = 4.dp
@@ -59,13 +58,13 @@ fun KpuElectorateItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_dummy_person),
+                    bitmap = electorate.image.decodeStringBase64ToBitMap(),
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
                         .height(85.dp)
                         .width(76.dp),
-                    contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -84,7 +83,7 @@ fun KpuElectorateItem(
                             )
                         )
                         Text(
-                            text = electorate.dateCollectionDate,
+                            text = electorate.dateCollectionDate.toString(),
                             style = TextStyle(
                                 fontSize = 12.sp,
                                 fontFamily = poppinsFontFamily,
@@ -140,7 +139,6 @@ fun PreviewElectorateItem() {
                 name = "Ki Hadjar Dewantara",
                 gender = "Pria",
                 address = "Purwokerto Selatan",
-                dateCollectionDate = "13-12-2023"
             )
             KpuElectorateItem(electorate = electorate, modifier = Modifier.padding(all = 16.dp))
         }

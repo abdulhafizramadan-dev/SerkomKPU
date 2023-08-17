@@ -1,33 +1,40 @@
 package com.ahr.serkomkpu.presentation.entry_electorate
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahr.serkomkpu.presentation.destinations.ChooseLocationScreenDestination
 import com.ahr.serkomkpu.presentation.destinations.HomeScreenDestination
 import com.ahr.serkomkpu.ui.component.KpuAddressTextField
@@ -38,6 +45,13 @@ import com.ahr.serkomkpu.ui.component.KpuTextField
 import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
+import com.ahr.serkomkpu.util.decodeStringBase64ToBitMap
+import com.ahr.serkomkpu.util.uriToBase64
+import com.maxkeppeker.sheets.core.CoreDialog
+import com.maxkeppeker.sheets.core.models.CoreSelection
+import com.maxkeppeker.sheets.core.models.base.Header
+import com.maxkeppeker.sheets.core.models.base.IconSource
+import com.maxkeppeker.sheets.core.models.base.SelectionButton
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
@@ -46,26 +60,36 @@ import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+@FlowPreview
 @ExperimentalFoundationApi
 @Destination
 @ExperimentalMaterial3Api
 @Composable
 fun EntryElectorateScreen(
     navigator: DestinationsNavigator = EmptyDestinationsNavigator,
-    entryElectorateViewModel: EntryElectorateViewModel = viewModel()
+    entryElectorateViewModel: EntryElectorateViewModel = hiltViewModel()
 ) {
 
     val scrollState = rememberScrollState()
     val focusRequester = remember(::FocusRequester)
-//    val context = LocalContext.current
-//    val contentResolver = context.contentResolver
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+
+    val contentResolver = context.contentResolver
 
     val entryElectorateScreenUiState by entryElectorateViewModel.entryElectorateScreenUiState.collectAsState()
+    val btnAddEnabled by entryElectorateViewModel.btnAddEnabled.collectAsState(initial = false)
 
+    val selectedImage = entryElectorateScreenUiState.imageBitmap
+
+    val saveEntryElectorateDialogState = rememberUseCaseState()
     val calendarDialogState = rememberUseCaseState()
-
-    var selectedImage by remember { mutableStateOf<Uri?>(null) }
 
     val navigateUp: () -> Unit = { navigator.navigateUp() }
     val navigateToChooseLocationScreen: () -> Unit = {
@@ -81,19 +105,22 @@ fun EntryElectorateScreen(
 
     val options = remember { listOf("Laki-Laki", "Perempuan") }
 
-//    var imageBitmap by remember {
-//        mutableStateOf<Bitmap?>(null)
-//    }
-
     val openGalleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-//        if (uri != null) {
-//            val base64String = uriToBase64(contentResolver, uri)
-//            val bitmapDecoded = decodeStringBase64ToBitMap(base64String)
-//            imageBitmap = bitmapDecoded
-//        }
-        selectedImage = uri
+        if (uri != null) {
+            scope.launch {
+                withContext(Dispatchers.Default) {
+                    val base64String = uriToBase64(contentResolver, uri)
+                    val bitmapDecoded = base64String.decodeStringBase64ToBitMap()
+                    entryElectorateViewModel.updateImage(base64String)
+                    withContext(Dispatchers.Main) {
+                        entryElectorateViewModel.updateImageBitmap(bitmapDecoded)
+                    }
+                }
+            }
+
+        }
     }
 
     val openGallery: () -> Unit = {
@@ -102,6 +129,31 @@ fun EntryElectorateScreen(
     val openCalendarDialog: () -> Unit = {
         calendarDialogState.show()
     }
+
+    CoreDialog(
+        state = saveEntryElectorateDialogState,
+        selection = CoreSelection(
+            withButtonView = true,
+            negativeButton = SelectionButton(
+                text = "Batal"
+            ),
+            positiveButton = SelectionButton(
+                "Simpan"
+            ),
+            onPositiveClick = {
+                entryElectorateViewModel.addEntryElectorate()
+                navigateToHomeScreen()
+            },
+            onNegativeClick = { saveEntryElectorateDialogState.finish() }
+        ),
+        body = {
+            Text(text = "Anda dapat melihat data pemilih yang baru ditambah, di halaman daftar data pemilih!")
+        },
+        header = Header.Default(
+            title = "Apakah anda yakin ingin menyimpan data pemilih ini?",
+            icon = IconSource(imageVector = Icons.Default.Warning)
+        ),
+    )
 
     CalendarDialog(
         state = calendarDialogState,
@@ -112,9 +164,8 @@ fun EntryElectorateScreen(
         ),
         selection = CalendarSelection.Date { newDate ->
             entryElectorateViewModel.updateDateCollectionDate(newDate)
-            focusRequester.freeFocus()
-        },
-
+            focusManager.clearFocus()
+        }
     )
 
     Scaffold(
@@ -128,6 +179,7 @@ fun EntryElectorateScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
+                .animateContentSize()
                 .padding(paddingValues)
                 .verticalScroll(scrollState)
                 .padding(horizontal = 20.dp),
@@ -137,21 +189,24 @@ fun EntryElectorateScreen(
                 label = "NIK",
                 text = entryElectorateScreenUiState.nik,
                 onTextChanged = entryElectorateViewModel::updateNik,
-                placeholder = "Masukan NIK disini"
+                placeholder = "Masukan NIK disini",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             Spacer(modifier = Modifier.height(20.dp))
             KpuTextField(
                 label = "Nama Lengkap",
                 text = entryElectorateScreenUiState.name,
                 onTextChanged = entryElectorateViewModel::updateName,
-                placeholder = "Masukan nama lengkap disini"
+                placeholder = "Masukan nama lengkap disini",
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words)
             )
             Spacer(modifier = Modifier.height(20.dp))
             KpuTextField(
                 label = "Nomor Telepon",
                 text = entryElectorateScreenUiState.phone,
                 onTextChanged = entryElectorateViewModel::updatePhone,
-                placeholder = "Masukan no telepon disini"
+                placeholder = "Masukan no telepon disini",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             Spacer(modifier = Modifier.height(20.dp))
             KpuRadioButton(
@@ -166,7 +221,7 @@ fun EntryElectorateScreen(
                 onTextChanged = {},
                 placeholder = "Masukan tanggal pendataan",
                 onClicked = openCalendarDialog,
-                focusRequester = focusRequester
+                focusRequester = focusRequester,
             )
             Spacer(modifier = Modifier.height(12.dp))
             KpuAddressTextField(
@@ -174,7 +229,8 @@ fun EntryElectorateScreen(
                 text = entryElectorateScreenUiState.address,
                 placeholder = "Masukan alamat rumah",
                 onTextChanged = entryElectorateViewModel::updateAddress,
-                onChooseLocationClicked = navigateToChooseLocationScreen
+                onChooseLocationClicked = navigateToChooseLocationScreen,
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
             )
             Spacer(modifier = Modifier.height(20.dp))
             KpuButton(
@@ -185,32 +241,26 @@ fun EntryElectorateScreen(
                     contentColor = Color(0xFFFFFFFF)
                 )
             )
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Spacer(modifier = Modifier.width(4.dp))
-//                Text(
-//                    text = "image.jpg",
-//                    style = TextStyle(
-//                        fontSize = 12.sp,
-//                        fontFamily = poppinsFontFamily,
-//                        fontWeight = FontWeight.Normal),
-//                        color = Color(0xFFD32B28),
-//                )
-//            }
             if (selectedImage != null) {
-                AsyncImage(model = selectedImage, contentDescription = null, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(20.dp))
+                Image(
+                    bitmap = selectedImage,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
             Spacer(modifier = Modifier.height(34.dp))
             KpuButton(
                 text = "Submit",
-                onButtonClicked = navigateToHomeScreen,
-                modifier = Modifier.fillMaxWidth()
+                onButtonClicked = { saveEntryElectorateDialogState.show() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = btnAddEnabled
             )
         }
     }
 }
 
+@FlowPreview
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Preview

@@ -15,6 +15,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahr.serkomkpu.presentation.destinations.HomeScreenDestination
 import com.ahr.serkomkpu.presentation.destinations.LoginScreenDestination
 import com.ahr.serkomkpu.ui.component.KpuButton
@@ -35,17 +38,22 @@ import com.ahr.serkomkpu.ui.theme.poppinsFontFamily
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import kotlinx.coroutines.FlowPreview
 
+@FlowPreview
 @ExperimentalFoundationApi
 @Destination
 @ExperimentalMaterial3Api
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
-    navigator: DestinationsNavigator = EmptyDestinationsNavigator
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator,
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
 
     val scrollState = rememberScrollState()
+
+    val loginScreenUiState by loginViewModel.loginScreenUiState.collectAsState()
+    val btnLoginEnabled by loginViewModel.btnLoginEnabled.collectAsState(initial = false)
 
     val navigateToMainScreen: () -> Unit = {
         navigator.navigate(HomeScreenDestination()) {
@@ -57,7 +65,6 @@ fun LoginScreen(
 
     Scaffold(
         topBar = { KpuTopAppBar(title = "Masuk", type = KpuTopAppBarType.Auth) },
-        modifier = modifier
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -67,15 +74,15 @@ fun LoginScreen(
         ) {
             KpuTextField(
                 label = "Masukan Email",
-                text = "",
-                onTextChanged = {},
+                text = loginScreenUiState.email,
+                onTextChanged = loginViewModel::updateEmail,
                 placeholder = "Masukan Email anda"
             )
             Spacer(modifier = Modifier.height(20.dp))
             KpuTextField(
                 label = "Password",
-                text = "",
-                onTextChanged = {},
+                text = loginScreenUiState.password,
+                onTextChanged = loginViewModel::updatePassword,
                 placeholder = "Masukan password anda",
                 type = KpuTextFieldType.Password
             )
@@ -97,13 +104,16 @@ fun LoginScreen(
             KpuButton(
                 text = "Masuk",
                 onButtonClicked = navigateToMainScreen,
-                modifier = Modifier.offset(y = (-8).dp)
-                    .fillMaxWidth()
+                modifier = Modifier
+                    .offset(y = (-8).dp)
+                    .fillMaxWidth(),
+                enabled = btnLoginEnabled
             )
         }
     }
 }
 
+@FlowPreview
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Preview

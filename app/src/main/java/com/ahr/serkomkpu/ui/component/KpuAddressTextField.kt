@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,7 +45,8 @@ fun KpuAddressTextField(
     text: String,
     placeholder: String,
     onTextChanged: (String) -> Unit,
-    onChooseLocationClicked: () -> Unit = {}
+    onChooseLocationClicked: () -> Unit = {},
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -69,7 +71,8 @@ fun KpuAddressTextField(
             text = text,
             onTextChanged = onTextChanged,
             placeholder = placeholder,
-            modifier = Modifier.offset(y = (-4).dp)
+            modifier = Modifier.offset(y = (-4).dp),
+            keyboardOptions = keyboardOptions
         )
     }
 }
@@ -80,7 +83,8 @@ fun KpuAddressOutlinedTextField(
     modifier: Modifier = Modifier,
     text: String,
     onTextChanged: (String) -> Unit,
-    placeholder: String
+    placeholder: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     OutlinedTextField(
         value = text,
@@ -91,7 +95,8 @@ fun KpuAddressOutlinedTextField(
         textStyle = MaterialTheme.typography.placeholderInputTextStyle.copy(MaterialTheme.colorScheme.onBackground),
         modifier = modifier
             .height(89.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        keyboardOptions = keyboardOptions
     )
 }
 

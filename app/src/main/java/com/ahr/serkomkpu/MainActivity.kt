@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import com.ahr.serkomkpu.presentation.NavGraphs
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {

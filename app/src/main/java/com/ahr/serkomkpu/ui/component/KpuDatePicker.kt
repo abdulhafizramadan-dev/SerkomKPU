@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,7 +45,8 @@ fun KpuDatePicker(
     onTextChanged: (String) -> Unit,
     placeholder: String,
     onClicked: () -> Unit = {},
-    focusRequester: FocusRequester = FocusRequester.Default
+    focusRequester: FocusRequester = FocusRequester.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -56,7 +58,8 @@ fun KpuDatePicker(
             onTextChanged = onTextChanged,
             placeholder = placeholder,
             onClicked = onClicked,
-            focusRequester = focusRequester
+            focusRequester = focusRequester,
+            keyboardOptions = keyboardOptions
         )
     }
 }
@@ -69,7 +72,8 @@ fun KpuDatePickerTextField(
     onTextChanged: (String) -> Unit,
     placeholder: String,
     onClicked: () -> Unit = {},
-    focusRequester: FocusRequester = FocusRequester.Default
+    focusRequester: FocusRequester = FocusRequester.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     OutlinedTextField(
         value = text,
@@ -92,7 +96,8 @@ fun KpuDatePickerTextField(
                 contentDescription = null,
                 tint = Color(0xFF49454F)
             )
-        }
+        },
+        keyboardOptions = keyboardOptions
     )
 }
 

@@ -3,7 +3,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "1.8.10-1.0.9"
     id("kotlin-parcelize")
-}
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
+    }
 
 android {
     namespace = "com.ahr.serkomkpu"
@@ -80,6 +82,17 @@ dependencies {
     implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.2.0")
     implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.2.0")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.3")
+    implementation("androidx.room:room-runtime:2.5.2")
+    ksp("androidx.room:room-compiler:2.5.2")
+    implementation("androidx.room:room-ktx:2.5.2")
 
+    implementation("com.google.dagger:hilt-android:2.44.2")
+    kapt("com.google.dagger:hilt-android-compiler:2.44.2")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.3")
+}
+
+kapt {
+    correctErrorTypes = true
 }

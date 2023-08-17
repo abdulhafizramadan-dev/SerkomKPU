@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -44,6 +45,7 @@ fun KpuTextField(
     text: String,
     onTextChanged: (String) -> Unit,
     placeholder: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     type: KpuTextFieldType = KpuTextFieldType.Text
 ) {
     Column(
@@ -56,7 +58,8 @@ fun KpuTextField(
                 KpuOutlinedTextField(
                     text = text,
                     onTextChanged = onTextChanged,
-                    placeholder = placeholder
+                    placeholder = placeholder,
+                    keyboardOptions = keyboardOptions
                 )
             }
             KpuTextFieldType.Password -> {
@@ -76,7 +79,8 @@ fun KpuOutlinedTextField(
     modifier: Modifier = Modifier,
     text: String,
     onTextChanged: (String) -> Unit,
-    placeholder: String
+    placeholder: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     OutlinedTextField(
         value = text,
@@ -88,8 +92,9 @@ fun KpuOutlinedTextField(
         colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = Color(0xFFDEDEDE),),
         textStyle = MaterialTheme.typography.placeholderInputTextStyle.copy(MaterialTheme.colorScheme.onBackground),
         modifier = modifier
-            .height(50.dp)
-            .fillMaxWidth()
+            .height(52.dp)
+            .fillMaxWidth(),
+        keyboardOptions = keyboardOptions
     )
 }
 
@@ -136,7 +141,7 @@ fun KpuOutlinedTextFieldPassword(
             }
         },
         modifier = modifier
-            .height(50.dp)
+            .height(52.dp)
             .fillMaxWidth()
     )
 }

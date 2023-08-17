@@ -2,6 +2,8 @@ package com.ahr.serkomkpu.presentation.list_electorate
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,15 +17,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ahr.serkomkpu.domain.model.Electorate
-import com.ahr.serkomkpu.presentation.destinations.DetailElectorateDestination
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.ahr.serkomkpu.presentation.destinations.DetailElectorateScreenDestination
 import com.ahr.serkomkpu.ui.component.KpuOutlinedTextField
 import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
@@ -31,31 +33,45 @@ import com.ahr.serkomkpu.ui.theme.greyTextFill
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 
+@FlowPreview
 @Destination
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
 fun ListElectorateScreen(
-    navigator: DestinationsNavigator = EmptyDestinationsNavigator
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator,
+    listElectorateViewModel: ListElectorateViewModel = hiltViewModel()
 ) {
 
-    var text by remember { mutableStateOf("") }
-
-    val navigateToDetailElectorate: (Electorate) -> Unit = { electorate ->
-        navigator.navigate(DetailElectorateDestination(electorate))
+    val navigateToDetailElectorate: (Int) -> Unit = {
+        navigator.navigate(DetailElectorateScreenDestination(id = it))
     }
 
-    val electorates = (1..10).map {
-        Electorate(
-            nik = "201004000242002",
-            name = "Ki Hadjar Dewantara",
-            gender = "Pria",
-            address = "Purwokerto Selatan",
-            dateCollectionDate = "13-12-2023",
-            phone = "08123456789",
-            id = it
-        )
+    val listElectorateScreenUiState by listElectorateViewModel.listElectorateScreenUiState.collectAsState()
+
+    val searchQuery = listElectorateScreenUiState.searchQuery
+    val electorates = listElectorateScreenUiState.electorates
+
+    LaunchedEffect(key1 = Unit) {
+        listElectorateViewModel.getAllElectorate()
+    }
+
+    LaunchedEffect(key1 = searchQuery) {
+        snapshotFlow { searchQuery }
+            .debounce(100)
+            .distinctUntilChanged()
+            .collectLatest { query ->
+                if (query.isNotEmpty()) {
+                    listElectorateViewModel.searchElectorate(query)
+                } else {
+                    listElectorateViewModel.getAllElectorate()
+                }
+            }
     }
 
     Scaffold(
@@ -63,40 +79,46 @@ fun ListElectorateScreen(
             KpuTopAppBar(title = "Daftar Data Pemilih")
         }
     ) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier.padding(paddingValues)
         ) {
-            item {
-                KpuOutlinedTextField(
-                    text = text,
-                    onTextChanged = { text = it },
-                    placeholder = "Cari data penduduk",
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null,
-                            tint = greyTextFill
-                        )
-                    },
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
-                        .fillMaxWidth()
-                        .padding(top = 26.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
-                )
-            }
-            items(items = electorates, key = { it.id }) { electorate ->
-                KpuElectorateItem(
-                    electorate = electorate,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(bottom = 16.dp),
-                    onCardClicked = navigateToDetailElectorate
-                )
+            KpuOutlinedTextField(
+                text = searchQuery,
+                onTextChanged = listElectorateViewModel::updateSearchQuery,
+                placeholder = "Cari data penduduk",
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = greyTextFill
+                    )
+                },
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxWidth()
+                    .padding(top = 26.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
+            )
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(all = 4.dp),
+            ) {
+                items(items = electorates, key = { it.id }) { electorate ->
+                    KpuElectorateItem(
+                        electorate = electorate,
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp)
+                            .padding(bottom = 16.dp)
+                            .animateItemPlacement(),
+                        onCardClicked = navigateToDetailElectorate
+                    )
+                }
             }
         }
     }
 }
 
+@FlowPreview
 @ExperimentalMaterial3Api
 @ExperimentalFoundationApi
 @Preview
