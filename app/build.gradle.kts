@@ -32,6 +32,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -73,5 +74,12 @@ dependencies {
 
     implementation("io.github.raamcosta.compose-destinations:core:1.9.51")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.9.51")
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.2.0")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.2.0")
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.3")
 
 }

@@ -23,6 +23,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -41,7 +43,8 @@ fun KpuDatePicker(
     text: String,
     onTextChanged: (String) -> Unit,
     placeholder: String,
-    onClicked: () -> Unit = {}
+    onClicked: () -> Unit = {},
+    focusRequester: FocusRequester = FocusRequester.Default
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -52,7 +55,8 @@ fun KpuDatePicker(
             text = text,
             onTextChanged = onTextChanged,
             placeholder = placeholder,
-            onClicked = onClicked
+            onClicked = onClicked,
+            focusRequester = focusRequester
         )
     }
 }
@@ -64,7 +68,8 @@ fun KpuDatePickerTextField(
     text: String,
     onTextChanged: (String) -> Unit,
     placeholder: String,
-    onClicked: () -> Unit = {}
+    onClicked: () -> Unit = {},
+    focusRequester: FocusRequester = FocusRequester.Default
 ) {
     OutlinedTextField(
         value = text,
@@ -79,6 +84,7 @@ fun KpuDatePickerTextField(
             .height(50.dp)
             .fillMaxWidth()
             .clickable { onClicked() }
+            .focusRequester(focusRequester)
             .onFocusChanged { if (it.isFocused) onClicked() },
         trailingIcon = {
             Icon(
