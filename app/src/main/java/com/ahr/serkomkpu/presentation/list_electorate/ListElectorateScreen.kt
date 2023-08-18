@@ -29,6 +29,7 @@ import com.ahr.serkomkpu.presentation.destinations.DetailElectorateScreenDestina
 import com.ahr.serkomkpu.ui.component.KpuOutlinedTextField
 import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
+import com.ahr.serkomkpu.ui.theme.StatusBarUiController
 import com.ahr.serkomkpu.ui.theme.greyTextFill
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -47,6 +48,11 @@ fun ListElectorateScreen(
     navigator: DestinationsNavigator = EmptyDestinationsNavigator,
     listElectorateViewModel: ListElectorateViewModel = hiltViewModel()
 ) {
+
+    StatusBarUiController(
+        color = MaterialTheme.colorScheme.background,
+        useDarkIcons = true
+    )
 
     val navigateToDetailElectorate: (Int) -> Unit = {
         navigator.navigate(DetailElectorateScreenDestination(id = it))

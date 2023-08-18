@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,6 +29,7 @@ import com.ahr.serkomkpu.R
 import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
+import com.ahr.serkomkpu.ui.theme.StatusBarUiController
 import com.ahr.serkomkpu.ui.theme.poppinsFontFamily
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -39,6 +41,11 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 fun InformationScreen(
     navigator: DestinationsNavigator = EmptyDestinationsNavigator
 ) {
+
+    StatusBarUiController(
+        color = MaterialTheme.colorScheme.background,
+        useDarkIcons = true
+    )
 
     val scrollState = rememberScrollState()
 

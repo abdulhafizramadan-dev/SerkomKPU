@@ -28,6 +28,8 @@ import com.ahr.serkomkpu.presentation.destinations.ListElectorateScreenDestinati
 import com.ahr.serkomkpu.presentation.destinations.LoginScreenDestination
 import com.ahr.serkomkpu.ui.component.KpuMenu
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
+import com.ahr.serkomkpu.ui.theme.StatusBarUiController
+import com.ahr.serkomkpu.ui.theme.lightRedKpu
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.maxkeppeker.sheets.core.CoreDialog
 import com.maxkeppeker.sheets.core.models.CoreSelection
@@ -50,6 +52,11 @@ fun HomeScreen(
     navigator: DestinationsNavigator = EmptyDestinationsNavigator,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
+
+    StatusBarUiController(
+        color = lightRedKpu,
+        useDarkIcons = false
+    )
 
     val scrollState = rememberScrollState()
     val logoutDialogState = rememberUseCaseState()

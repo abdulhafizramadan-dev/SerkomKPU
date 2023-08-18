@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,6 +46,7 @@ import com.ahr.serkomkpu.ui.component.KpuTextField
 import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
+import com.ahr.serkomkpu.ui.theme.StatusBarUiController
 import com.ahr.serkomkpu.util.decodeStringBase64ToBitMap
 import com.ahr.serkomkpu.util.uriToBase64
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -80,6 +82,11 @@ fun EntryElectorateScreen(
     resultChooseLocationReceipt: ResultRecipient<ChooseLocationScreenDestination, String> = EmptyResultRecipient(),
     entryElectorateViewModel: EntryElectorateViewModel = hiltViewModel()
 ) {
+
+    StatusBarUiController(
+        color = MaterialTheme.colorScheme.background,
+        useDarkIcons = true
+    )
 
     val scrollState = rememberScrollState()
     val focusRequester = remember(::FocusRequester)

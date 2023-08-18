@@ -97,6 +97,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
     implementation("com.google.accompanist:accompanist-permissions:0.33.0-alpha")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.33.0-alpha")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.3")
 }
