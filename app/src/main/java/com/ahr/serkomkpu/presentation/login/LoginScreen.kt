@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,6 +35,7 @@ import com.ahr.serkomkpu.ui.component.KpuTextFieldType
 import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
+import com.ahr.serkomkpu.ui.theme.StatusBarUiController
 import com.ahr.serkomkpu.ui.theme.poppinsFontFamily
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.ramcosta.composedestinations.annotation.Destination
@@ -51,6 +53,11 @@ fun LoginScreen(
     navigator: DestinationsNavigator = EmptyDestinationsNavigator,
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
+
+    StatusBarUiController(
+        color = MaterialTheme.colorScheme.background,
+        useDarkIcons = true
+    )
 
     val scrollState = rememberScrollState()
 

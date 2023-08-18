@@ -11,15 +11,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +36,12 @@ import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.ui.theme.StatusBarUiController
 import com.ahr.serkomkpu.ui.theme.greyTextFill
+import com.maxkeppeker.sheets.core.CoreDialog
+import com.maxkeppeker.sheets.core.models.CoreSelection
+import com.maxkeppeker.sheets.core.models.base.Header
+import com.maxkeppeker.sheets.core.models.base.IconSource
+import com.maxkeppeker.sheets.core.models.base.SelectionButton
+import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -54,6 +65,8 @@ fun ListElectorateScreen(
         useDarkIcons = true
     )
 
+    val deleteElectorateDialogState = rememberUseCaseState()
+
     val navigateToDetailElectorate: (Int) -> Unit = {
         navigator.navigate(DetailElectorateScreenDestination(id = it))
     }
@@ -62,6 +75,10 @@ fun ListElectorateScreen(
 
     val searchQuery = listElectorateScreenUiState.searchQuery
     val electorates = listElectorateScreenUiState.electorates
+
+    var tempDeletedElectorateId by remember {
+        mutableIntStateOf(0)
+    }
 
     LaunchedEffect(key1 = Unit) {
         listElectorateViewModel.getAllElectorate()
@@ -79,6 +96,29 @@ fun ListElectorateScreen(
                 }
             }
     }
+
+    CoreDialog(
+        state = deleteElectorateDialogState,
+        header = Header.Default(
+            title = "Apakah anda yakin ingin menghapus data ini?",
+            icon = IconSource(imageVector = Icons.Default.Warning)
+        ),
+        body = {
+            Text(text = "Anda tidak dapat mengembalikan data pemilih yang sudah dihapus, apakah anda yakin?")
+        },
+        selection = CoreSelection(
+            withButtonView = true,
+            negativeButton = SelectionButton(
+                text = "Batal"
+            ),
+            positiveButton = SelectionButton(
+                "Hapus"
+            ),
+            onPositiveClick = { listElectorateViewModel.deleteElectorate(tempDeletedElectorateId) },
+            onNegativeClick = { deleteElectorateDialogState.finish() }
+        ),
+    )
+
 
     Scaffold(
         topBar = {
@@ -116,7 +156,11 @@ fun ListElectorateScreen(
                             .padding(horizontal = 12.dp)
                             .padding(bottom = 16.dp)
                             .animateItemPlacement(),
-                        onCardClicked = navigateToDetailElectorate
+                        onCardClicked = navigateToDetailElectorate,
+                        onDeleteIconClicked = {
+                            tempDeletedElectorateId = it
+                            deleteElectorateDialogState.show()
+                        }
                     )
                 }
             }

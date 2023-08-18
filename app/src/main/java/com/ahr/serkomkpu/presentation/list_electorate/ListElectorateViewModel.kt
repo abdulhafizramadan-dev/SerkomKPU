@@ -37,6 +37,13 @@ class ListElectorateViewModel @Inject constructor(
         }
     }
 
+    fun deleteElectorate(id: Int) {
+        viewModelScope.launch {
+            electorateRepository.deleteElectorate(id)
+        }
+    }
+
+
     fun updateSearchQuery(searchQuery: String) {
         _listElectorateScreenUiState.value = _listElectorateScreenUiState.value.copy(
             searchQuery = searchQuery
