@@ -2,6 +2,7 @@ package com.ahr.serkomkpu.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +29,7 @@ import com.ahr.serkomkpu.R
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.ui.theme.heading3
 import com.ahr.serkomkpu.ui.theme.redKpu
+import com.ahr.serkomkpu.ui.theme.regularTextStyle
 
 enum class KpuTopAppBarType {
     Default, Detail, Auth
@@ -38,6 +40,7 @@ enum class KpuTopAppBarType {
 fun KpuTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
+    subtitle: String? = null,
     type: KpuTopAppBarType = KpuTopAppBarType.Default,
     onNavIconClicked: () -> Unit = {},
     onRegisterButtonClicked: () -> Unit = {}
@@ -50,11 +53,24 @@ fun KpuTopAppBar(
         )
     ) {
         TopAppBar(
-            title = { Text(
-                text = title,
-                style = MaterialTheme.typography.heading3,
-                modifier = Modifier.offset(y = 2.dp)
-            ) },
+            title = {
+                Column {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.heading3,
+                        modifier = Modifier.offset(y = 2.dp)
+                    )
+                    if (subtitle != null) {
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.regularTextStyle.copy(
+                                color = redKpu
+                            ),
+                            modifier = Modifier.offset(y = 2.dp)
+                        )
+                    }
+                }
+            },
             actions = {
                 if (type == KpuTopAppBarType.Auth) {
                     Text(
@@ -93,7 +109,7 @@ fun PreviewAuthKpuTopAppBar() {
     SerkomKPUTheme {
         Surface {
             Scaffold(
-                topBar = { KpuTopAppBar(title = "Masuk", type = KpuTopAppBarType.Auth) }
+                topBar = { KpuTopAppBar(title = "Masuk", subtitle = "Register", type = KpuTopAppBarType.Auth) }
             ) { paddingValues ->
                 Box(modifier = Modifier.padding(paddingValues))
             }

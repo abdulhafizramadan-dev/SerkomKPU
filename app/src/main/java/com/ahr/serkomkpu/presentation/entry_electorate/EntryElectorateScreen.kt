@@ -47,6 +47,7 @@ import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.util.decodeStringBase64ToBitMap
 import com.ahr.serkomkpu.util.uriToBase64
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.maxkeppeker.sheets.core.CoreDialog
 import com.maxkeppeker.sheets.core.models.CoreSelection
 import com.maxkeppeker.sheets.core.models.base.Header
@@ -60,11 +61,15 @@ import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.ramcosta.composedestinations.result.EmptyResultRecipient
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@ExperimentalPermissionsApi
 @FlowPreview
 @ExperimentalFoundationApi
 @Destination
@@ -72,6 +77,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun EntryElectorateScreen(
     navigator: DestinationsNavigator = EmptyDestinationsNavigator,
+    resultChooseLocationReceipt: ResultRecipient<ChooseLocationScreenDestination, String> = EmptyResultRecipient(),
     entryElectorateViewModel: EntryElectorateViewModel = hiltViewModel()
 ) {
 
@@ -167,6 +173,13 @@ fun EntryElectorateScreen(
             focusManager.clearFocus()
         }
     )
+    
+    resultChooseLocationReceipt.onNavResult { result ->
+        when (result) {
+            NavResult.Canceled -> {}
+            is NavResult.Value -> entryElectorateViewModel.updateAddress(result.value)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -260,6 +273,7 @@ fun EntryElectorateScreen(
     }
 }
 
+@ExperimentalPermissionsApi
 @FlowPreview
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api

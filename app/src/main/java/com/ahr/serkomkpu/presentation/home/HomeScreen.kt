@@ -28,6 +28,7 @@ import com.ahr.serkomkpu.presentation.destinations.ListElectorateScreenDestinati
 import com.ahr.serkomkpu.presentation.destinations.LoginScreenDestination
 import com.ahr.serkomkpu.ui.component.KpuMenu
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.maxkeppeker.sheets.core.CoreDialog
 import com.maxkeppeker.sheets.core.models.CoreSelection
 import com.maxkeppeker.sheets.core.models.base.Header
@@ -39,6 +40,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.FlowPreview
 
+@ExperimentalPermissionsApi
 @FlowPreview
 @ExperimentalFoundationApi
 @Destination
@@ -130,6 +132,7 @@ fun HomeScreen(
     }
 }
 
+@ExperimentalPermissionsApi
 @FlowPreview
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api

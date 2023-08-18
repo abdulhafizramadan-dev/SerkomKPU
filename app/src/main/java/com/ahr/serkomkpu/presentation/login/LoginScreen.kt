@@ -35,11 +35,13 @@ import com.ahr.serkomkpu.ui.component.KpuTopAppBar
 import com.ahr.serkomkpu.ui.component.KpuTopAppBarType
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
 import com.ahr.serkomkpu.ui.theme.poppinsFontFamily
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.FlowPreview
 
+@ExperimentalPermissionsApi
 @FlowPreview
 @ExperimentalFoundationApi
 @Destination
@@ -113,6 +115,7 @@ fun LoginScreen(
     }
 }
 
+@ExperimentalPermissionsApi
 @FlowPreview
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api

@@ -11,9 +11,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.ahr.serkomkpu.presentation.NavGraphs
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalPermissionsApi
 @AndroidEntryPoint
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api

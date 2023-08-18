@@ -5,7 +5,9 @@ plugins {
     id("kotlin-parcelize")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
-    }
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+
+}
 
 android {
     namespace = "com.ahr.serkomkpu"
@@ -89,6 +91,12 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android-compiler:2.44.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    implementation("com.google.maps.android:maps-compose:2.13.0")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    implementation("com.google.accompanist:accompanist-permissions:0.33.0-alpha")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.3")
 }

@@ -21,13 +21,17 @@ import com.ahr.serkomkpu.R
 import com.ahr.serkomkpu.presentation.destinations.LoginScreenDestination
 import com.ahr.serkomkpu.presentation.destinations.SplashScreenDestination
 import com.ahr.serkomkpu.ui.theme.SerkomKPUTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@ExperimentalPermissionsApi
+@FlowPreview
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @RootNavGraph(start = true)
@@ -66,6 +70,7 @@ fun SplashScreen(
     }
 }
 
+@ExperimentalPermissionsApi
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Preview
