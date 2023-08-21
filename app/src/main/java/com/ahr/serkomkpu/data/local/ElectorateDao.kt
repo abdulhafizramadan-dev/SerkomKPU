@@ -11,7 +11,7 @@ interface ElectorateDao {
     @Query("SELECT * FROM electorateentity ORDER BY id DESC")
     fun getAllElectorate(): Flow<List<ElectorateEntity>>
 
-    @Query("SELECT * FROM electorateentity WHERE name LIKE '%' || :query || '%' OR address LIKE '%' || :query || '%' OR nik LIKE '%' || :query || '%' ORDER BY id DESC")
+    @Query("SELECT * FROM electorateentity WHERE name LIKE '%' || :query || '%' OR address LIKE '%' || :query || '%' OR nik LIKE '%' || :query || '%' OR gender LIKE '%' || :query || '%' ORDER BY id DESC")
     fun searchElectorate(query: String): Flow<List<ElectorateEntity>>
 
     @Query("SELECT * FROM electorateentity WHERE id = :id")
